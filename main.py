@@ -1,23 +1,35 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import subprocess as sp
+import multiprocessing as mp
 
 def main():
 	print("start of program")
-	a = np.array([1,2,3,6,123,51])
+	a = np.array([])
+	jobs = []
+	for i in range(1,254):
+		p = mp.Process(target=pinger(i))
+		jobs.append(p)
+		p.start()
+			
 	print(a)
-	print(a[a<10])
-	plot()
+	
+def pinger(i):
+	address = "192.168.1."+ str(i)
+	res = sp.call(["ping" , "-c" , "1" , address])
+	if res==0:
+		np.append(a,i)
+		print ("ping ok: " ,address)
+	elif res==2:
+		print("No response from " , address)
+	else:
+		print("Ping failed " , address)
+
+
 	
 
 
-def plot():
-	plt.ion()
-	for i in range(50):
-		y = np.random.random([10,1])
-		plt.plot(y)
-		plt.draw()
-		plt.pause(0.1)
-		plt.clf()
 
 if __name__ == "__main__":
 	main()
