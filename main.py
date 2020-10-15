@@ -3,28 +3,48 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import subprocess as sp
 import multiprocessing as mp
+import time
 
 def main():
+	manager = mp.Manager()
+	
+	a = manager.list()
 	print("start of program")
-	a = np.array([])
+	
 	jobs = []
-	for i in range(1,254):
-		p = mp.Process(target=pinger(i))
+	for i in range(1,10):
+		p = mp.Process(target=pinger, args=[i,a])
 		jobs.append(p)
 		p.start()
-			
-	print(a)
+		p.join()
+		
+	while checkJobs(jobs):
+		time.sleep(1)
 	
-def pinger(i):
-	address = "192.168.1."+ str(i)
-	res = sp.call(["ping" , "-c" , "1" , address])
-	if res==0:
-		np.append(a,i)
-		print ("ping ok: " ,address)
-	elif res==2:
-		print("No response from " , address)
-	else:
-		print("Ping failed " , address)
+	print(a)
+
+def pinger(i,a):
+	address = "192.168.1." + str(i)
+	try :
+		sp.check_output(["ping" , "-c" , "1" , address])
+		print("response from: " , address)
+		a.append(i)
+	except sp.CalledProcessError:
+		print("failed of ping " , address )
+	
+def checkJobs(jobs):
+	allrun = False
+	for i in jobs:
+		if i.is_alive():
+			allrun = True
+			
+	return allrun
+				
+
+	
+def test(i,a):
+	print("hello from test:" , i)
+	a.append(i)
 
 
 	
