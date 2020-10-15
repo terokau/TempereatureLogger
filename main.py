@@ -1,13 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
 from datetime import datetime
 import gpiozero as pi
 from omron_2jcie_bu01 import Omron2JCIE_BU01
 
 def main():
-	manager = mp.Manager()
-	
 	getTemperatures = []
 	getSensorTemp = []
 	getLight = []
@@ -19,11 +18,12 @@ def main():
 	sensor = Omron2JCIE_BU01.serial("/dev/ttyUSB0")
 	devinfo = sensor.info()
 	
+	plt.ion()
 	
 	print(devinfo)
 	print("start of program ")
 	print("length: " , setMeasureMaxLength,"h , Interval: " , setInterVal, "s array length:" , setArrayLength)
-	plt.ion()
+	
 	
 	while True:
 		#Read data from 2JCIE-BU01
